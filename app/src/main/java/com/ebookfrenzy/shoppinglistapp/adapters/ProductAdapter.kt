@@ -1,31 +1,56 @@
 package com.ebookfrenzy.shoppinglistapp.adapters
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.util.Base64
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.ebookfrenzy.shoppinglistapp.R
 import com.ebookfrenzy.shoppinglistapp.data.Product
+import com.ebookfrenzy.shoppinglistapp.data.Repository
+import java.io.ByteArrayInputStream
+import java.io.InputStream
 
 
 class ProductAdapter(var products: MutableList<Product>) :
     RecyclerView.Adapter<ProductAdapter.ViewHolder>() {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductAdapter.ViewHolder {
-        TODO("Not yet implemented")
+        val v = LayoutInflater.from(parent.context)
+            .inflate(R.layout.card_layout, parent, false)
+        return ViewHolder(v)
     }
 
     override fun onBindViewHolder(holder: ProductAdapter.ViewHolder, position: Int) {
-        TODO("Not yet implemented")
+
+
+        holder.itemName.text = products[position].name
+        holder.itemDetail.text = "Quantity:" + products[position].quantity
+        holder.itemImage.setImageBitmap(products[position].image) // holder.itemImage.setImageBitmap()
     }
 
     override fun getItemCount(): Int {
-        TODO("Not yet implemented")
+        return Repository.products.size
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        //here you need to to do stuff also - go back to the exercises
-        //about recyclerviews and you can use approach that were used
-        //in the exercise about recyclerviews from the book (lesson 3)
-        //if you did not do that exercise - then first do that exercise in
-        //a seperate project to learn about using a ViewHolder
+
+
+
+
+        var itemImage: ImageView
+        var itemName: TextView
+        var itemDetail: TextView
+        init {
+
+            itemImage = itemView.findViewById(R.id.item_image)
+            itemName = itemView.findViewById(R.id.item_name)
+            itemDetail = itemView.findViewById(R.id.item_detail)
+        }
 
     }
 }

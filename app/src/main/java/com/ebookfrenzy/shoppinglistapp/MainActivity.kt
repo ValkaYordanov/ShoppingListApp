@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ebookfrenzy.shoppinglistapp.adapters.ProductAdapter
 import com.ebookfrenzy.shoppinglistapp.data.Product
+import com.ebookfrenzy.shoppinglistapp.data.Repository
 import com.ebookfrenzy.shoppinglistapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -24,6 +25,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+        Repository.setContext(this)
 
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
@@ -43,12 +45,12 @@ class MainActivity : AppCompatActivity() {
         xml file - in this case the id of the recyclerview should
         be "recyclerView" - as the code line below uses that */
 
-        // binding.recyclerView.layoutManager = layoutManager
+         binding.recyclerView.layoutManager = layoutManager
 
         adapter = ProductAdapter(products)
 
         /*connecting the recyclerview to the adapter  */
-        //  binding.recyclerView.adapter = adapter
+          binding.recyclerView.adapter = adapter
 
     }
 }
