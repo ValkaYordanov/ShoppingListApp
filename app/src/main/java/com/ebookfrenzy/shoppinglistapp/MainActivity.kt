@@ -1,8 +1,17 @@
 package com.ebookfrenzy.shoppinglistapp
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.icu.number.NumberFormatter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.Button
+import android.widget.EditText
+import android.widget.NumberPicker
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -10,6 +19,8 @@ import com.ebookfrenzy.shoppinglistapp.adapters.ProductAdapter
 import com.ebookfrenzy.shoppinglistapp.data.Product
 import com.ebookfrenzy.shoppinglistapp.data.Repository
 import com.ebookfrenzy.shoppinglistapp.databinding.ActivityMainBinding
+import org.w3c.dom.Text
+import java.text.NumberFormat
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,6 +31,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -27,7 +39,22 @@ class MainActivity : AppCompatActivity() {
         setContentView(view)
         Repository.setContext(this)
 
+
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+
+        val btnCreate = findViewById<Button>(R.id.btnCreate)
+        btnCreate.setOnClickListener {
+            val proName=findViewById<EditText>(R.id.ed_productName).getText().toString()
+
+            val shop=findViewById<EditText>(R.id.ed_shop).getText().toString()
+
+            var bitmap = BitmapFactory.decodeResource(Repository.myContext.resources, R.drawable.index)
+            bitmap = Bitmap.createScaledBitmap(bitmap, 20, 20, true)
+
+           var product = Product( name = proName, image=bitmap,shop = shop,quantity = 5)
+            adapter.createProduct(product)
+            Log.d("onCreate", "${product}")
+            }
 
 
 
@@ -51,6 +78,44 @@ class MainActivity : AppCompatActivity() {
 
         /*connecting the recyclerview to the adapter  */
           binding.recyclerView.adapter = adapter
+
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        Log.d("icon_pressed", "${item.itemId}")
+        when (item.itemId) {
+            R.id.item_addProductItem -> {
+                Toast.makeText(this, "About item clicked!", Toast.LENGTH_LONG)
+                    .show()
+                return true
+            }
+            R.id.item_refresh -> {
+                Toast.makeText(this, "Delete item clicked!", Toast.LENGTH_LONG)
+                    .show()
+                return true
+            }
+            R.id.item_deleteAllItems -> {
+              adapter.deleteAllProducts()
+                return true
+            }
+            R.id.item_refresh -> {
+                Toast.makeText(this, "Refresh item clicked!", Toast.LENGTH_LONG)
+                    .show()
+                return true
+            }
+        }
+
+        return false //we did not handle the event
 
     }
 }

@@ -1,5 +1,6 @@
 package com.ebookfrenzy.shoppinglistapp.data
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -7,6 +8,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.ebookfrenzy.shoppinglistapp.R
 
+@SuppressLint("StaticFieldLeak")
 object Repository {
     var products = mutableListOf<Product>()
     lateinit var myContext:Context
@@ -27,7 +29,21 @@ object Repository {
         return productListener
     }
 
-    
+    fun deleteProduct(index: Int) { // in the Repository
+        products.removeAt(index)
+        productListener.value = products
+    }
+
+    fun deleteAllProducts() { // in the Repository
+        products.clear()
+        productListener.value = products
+    }
+
+    fun addProduct(product: Product)
+    {
+        products.add(product);
+        productListener.value = products
+    }
 
     fun createTestData()
     {
@@ -35,8 +51,8 @@ object Repository {
             bitmap = Bitmap.createScaledBitmap(bitmap, 20, 20, true)
         //add some products to the products list - for testing purposes
         Log.d("Repository","create testdata")
-        products.add(Product(name="tomater", image=bitmap))
-        products.add(Product(name="bønner",image=bitmap))
+        products.add(Product(name="tomater", image=bitmap, quantity = 1,shop = "fotex"))
+        products.add(Product(name="bønner",image=bitmap, quantity = 3,shop = "ikea"))
     }
 
 }

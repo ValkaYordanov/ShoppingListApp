@@ -22,6 +22,9 @@ class ProductAdapter(var products: MutableList<Product>) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductAdapter.ViewHolder {
         val v = LayoutInflater.from(parent.context)
             .inflate(R.layout.card_layout, parent, false)
+
+
+
         return ViewHolder(v)
     }
 
@@ -29,7 +32,7 @@ class ProductAdapter(var products: MutableList<Product>) :
 
 
         holder.itemName.text = products[position].name
-        holder.itemDetail.text = "Quantity:" + products[position].quantity
+        holder.itemDetail.text = "Quantity:" + products[position].quantity +" Shop: " +products[position].shop
         holder.itemImage.setImageBitmap(products[position].image) // holder.itemImage.setImageBitmap()
     }
 
@@ -37,9 +40,16 @@ class ProductAdapter(var products: MutableList<Product>) :
         return Repository.products.size
     }
 
+    fun createProduct(product:Product)
+    {
+        Repository.addProduct(product)
+    }
+    fun deleteAllProducts()
+    {
+        Repository.deleteAllProducts()
+    }
+
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-
 
 
         var itemImage: ImageView
