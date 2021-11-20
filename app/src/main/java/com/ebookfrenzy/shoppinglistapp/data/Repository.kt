@@ -47,6 +47,7 @@ object Repository {
 
     fun createTestData()
     {
+
         var bitmap = BitmapFactory.decodeResource(myContext.resources, R.drawable.index)
             bitmap = Bitmap.createScaledBitmap(bitmap, 20, 20, true)
         //add some products to the products list - for testing purposes

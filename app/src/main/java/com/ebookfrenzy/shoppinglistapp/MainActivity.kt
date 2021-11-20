@@ -1,5 +1,6 @@
 package com.ebookfrenzy.shoppinglistapp
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.icu.number.NumberFormatter
@@ -8,6 +9,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.NumberPicker
@@ -20,6 +23,7 @@ import com.ebookfrenzy.shoppinglistapp.data.Product
 import com.ebookfrenzy.shoppinglistapp.data.Repository
 import com.ebookfrenzy.shoppinglistapp.databinding.ActivityMainBinding
 import org.w3c.dom.Text
+import java.lang.RuntimeException
 import java.text.NumberFormat
 
 class MainActivity : AppCompatActivity() {
@@ -39,21 +43,41 @@ class MainActivity : AppCompatActivity() {
         setContentView(view)
         Repository.setContext(this)
 
-
+        //Crashlytics.getInstance().crash();
+        //throw RuntimeException("test crash")
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
         val btnCreate = findViewById<Button>(R.id.btnCreate)
         btnCreate.setOnClickListener {
             val proName=findViewById<EditText>(R.id.ed_productName).getText().toString()
-
             val shop=findViewById<EditText>(R.id.ed_shop).getText().toString()
+            val qantitystring = findViewById<EditText>(R.id.ed_quantity).getText().toString()
+
+            if(proName.isNullOrEmpty()|| qantitystring.isNullOrEmpty()|| shop.isNullOrEmpty())
+            {
+                findViewById<EditText>(R.id.ed_productName).setText("")
+                findViewById<EditText>(R.id.ed_quantity).setText("")
+                findViewById<EditText>(R.id.ed_shop).setText("")
+                it.hideKeyboard()
+                return@setOnClickListener;
+            }
+
+            val qantity = findViewById<EditText>(R.id.ed_quantity).getText().toString().toInt()
+
 
             var bitmap = BitmapFactory.decodeResource(Repository.myContext.resources, R.drawable.index)
             bitmap = Bitmap.createScaledBitmap(bitmap, 20, 20, true)
 
-           var product = Product( name = proName, image=bitmap,shop = shop,quantity = 5)
+           var product = Product( name = proName, image=bitmap,shop = shop,quantity = qantity)
             adapter.createProduct(product)
+
+            findViewById<EditText>(R.id.ed_productName).setText("")
+            findViewById<EditText>(R.id.ed_quantity).setText("")
+            findViewById<EditText>(R.id.ed_shop).setText("")
+            it.hideKeyboard()
             Log.d("onCreate", "${product}")
+
+
             }
 
 
@@ -62,9 +86,16 @@ class MainActivity : AppCompatActivity() {
             Log.d("Products","Found ${it.size} products")
             updateUI(it)
         })
+
+
+
+
     }
 
-
+    fun View.hideKeyboard() {
+        val inputManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputManager.hideSoftInputFromWindow(windowToken, 0)
+    }
     fun updateUI(products : MutableList<Product>) {
         val layoutManager = LinearLayoutManager(this)
 
@@ -98,6 +129,18 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "About item clicked!", Toast.LENGTH_LONG)
                     .show()
                 return true
+            }
+            R.id.item_sortByName ->
+            {
+                Repository.products.sortBy { it.name }
+                    adapter.notifyDataSetChanged()
+
+            }
+            R.id.item_sortByQunatity ->
+            {
+                    Repository.products.sortBy { it.quantity }
+                            adapter.notifyDataSetChanged()
+
             }
             R.id.item_refresh -> {
                 Toast.makeText(this, "Delete item clicked!", Toast.LENGTH_LONG)

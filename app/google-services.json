@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "587091045605",
+    "project_id": "shoppinglistapp-cff3f",
+    "storage_bucket": "shoppinglistapp-cff3f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:587091045605:android:da789108d10ee50b82380c",
+        "android_client_info": {
+          "package_name": "com.ebookfrenzy.shoppinglistapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "587091045605-phog7o8hivhu7lf4kdpt8ba1p4qiakob.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjpJiz7tjJmmMWPHsJm1iUFnF5lwqbiZ0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "587091045605-phog7o8hivhu7lf4kdpt8ba1p4qiakob.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
