@@ -1,5 +1,6 @@
 package com.ebookfrenzy.shoppinglistapp
 
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -22,6 +23,10 @@ import com.ebookfrenzy.shoppinglistapp.adapters.ProductAdapter
 import com.ebookfrenzy.shoppinglistapp.data.Product
 import com.ebookfrenzy.shoppinglistapp.data.Repository
 import com.ebookfrenzy.shoppinglistapp.databinding.ActivityMainBinding
+import com.google.firebase.FirebaseApp
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import org.w3c.dom.Text
 import java.lang.RuntimeException
 import java.text.NumberFormat
@@ -32,9 +37,48 @@ class MainActivity : AppCompatActivity() {
     lateinit var adapter: ProductAdapter
     lateinit var binding : ActivityMainBinding
     lateinit var viewModel : MainViewModel
+    private lateinit var db: FirebaseFirestore
+
+    private fun addProduct() {
+        val proName=findViewById<EditText>(R.id.ed_productName).getText().toString()
+        val shop=findViewById<EditText>(R.id.ed_shop).getText().toString()
+        val qantitystring = findViewById<EditText>(R.id.ed_quantity).getText().toString()
+
+        if(proName.isNullOrEmpty()|| qantitystring.isNullOrEmpty()|| shop.isNullOrEmpty())
+        {
+            findViewById<EditText>(R.id.ed_productName).setText("")
+            findViewById<EditText>(R.id.ed_quantity).setText("")
+            findViewById<EditText>(R.id.ed_shop).setText("")
+        }
+
+        val qantityField = findViewById<EditText>(R.id.ed_quantity).getText().toString().toInt()
 
 
+//        var bitmap = BitmapFactory.decodeResource(Repository.myContext.resources, R.drawable.index)
+//        bitmap = Bitmap.createScaledBitmap(bitmap, 20, 20, true)
 
+//        var product = Product( name = proName,shop = shop,quantity = qantity)
+//        adapter.createProduct(product)
+
+
+        val product = Product(
+            name = findViewById<EditText>(R.id.ed_productName).getText().toString(),
+            quantity = qantityField,
+            shop = findViewById<EditText>(R.id.ed_shop).getText().toString()
+        )
+        db.collection("product")
+            .add(product)
+            .addOnSuccessListener { documentReference ->
+                Log.d("Error", "DocumentSnapshot written with ID: " + documentReference.id)
+            }
+            .addOnFailureListener { e -> Log.w("Error", "Error adding document", e) }
+
+        findViewById<EditText>(R.id.ed_productName).setText("")
+        findViewById<EditText>(R.id.ed_quantity).setText("")
+        findViewById<EditText>(R.id.ed_shop).setText("")
+
+        Log.d("onCreate", "${product}")
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,42 +87,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(view)
         Repository.setContext(this)
 
+        FirebaseApp.initializeApp(applicationContext)
+        db = Firebase.firestore
+
         //Crashlytics.getInstance().crash();
         //throw RuntimeException("test crash")
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
         val btnCreate = findViewById<Button>(R.id.btnCreate)
-        btnCreate.setOnClickListener {
-            val proName=findViewById<EditText>(R.id.ed_productName).getText().toString()
-            val shop=findViewById<EditText>(R.id.ed_shop).getText().toString()
-            val qantitystring = findViewById<EditText>(R.id.ed_quantity).getText().toString()
-
-            if(proName.isNullOrEmpty()|| qantitystring.isNullOrEmpty()|| shop.isNullOrEmpty())
-            {
-                findViewById<EditText>(R.id.ed_productName).setText("")
-                findViewById<EditText>(R.id.ed_quantity).setText("")
-                findViewById<EditText>(R.id.ed_shop).setText("")
-                it.hideKeyboard()
-                return@setOnClickListener;
-            }
-
-            val qantity = findViewById<EditText>(R.id.ed_quantity).getText().toString().toInt()
-
-
-            var bitmap = BitmapFactory.decodeResource(Repository.myContext.resources, R.drawable.index)
-            bitmap = Bitmap.createScaledBitmap(bitmap, 20, 20, true)
-
-           var product = Product( name = proName, image=bitmap,shop = shop,quantity = qantity)
-            adapter.createProduct(product)
-
-            findViewById<EditText>(R.id.ed_productName).setText("")
-            findViewById<EditText>(R.id.ed_quantity).setText("")
-            findViewById<EditText>(R.id.ed_shop).setText("")
-            it.hideKeyboard()
-            Log.d("onCreate", "${product}")
-
-
-            }
+        btnCreate.setOnClickListener { addProduct() }
 
 
 

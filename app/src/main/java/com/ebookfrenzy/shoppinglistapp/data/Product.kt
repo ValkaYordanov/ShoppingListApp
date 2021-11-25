@@ -2,4 +2,6 @@ package com.ebookfrenzy.shoppinglistapp.data
 
 import android.graphics.Bitmap
 
-data class Product(var name:String, var image: Bitmap, var quantity:Int, var shop:String ) {}
+data class Product(var name:String = "", var quantity:Int=0, var shop:String="" ) {}
+
+//, var image: Bitmap

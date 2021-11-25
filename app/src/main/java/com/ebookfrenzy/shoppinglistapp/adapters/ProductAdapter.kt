@@ -34,7 +34,7 @@ class ProductAdapter(var products: MutableList<Product>) :
 
         holder.itemName.text = products[position].name
         holder.itemDetail.text = "Quantity:" + products[position].quantity +"\nShop: " +products[position].shop
-        holder.itemImage.setImageBitmap(products[position].image) // holder.itemImage.setImageBitmap()
+        //holder.itemImage.setImageBitmap(products[position].image) // holder.itemImage.setImageBitmap()
     }
 
     override fun getItemCount(): Int {
@@ -52,13 +52,13 @@ class ProductAdapter(var products: MutableList<Product>) :
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        var itemImage: ImageView
+        //var itemImage: ImageView
         var itemName: TextView
         var itemDetail: TextView
         var itemDelete :Button
         init {
 
-            itemImage = itemView.findViewById(R.id.item_image)
+            //itemImage = itemView.findViewById(R.id.item_image)
             itemName = itemView.findViewById(R.id.item_name)
             itemDetail = itemView.findViewById(R.id.item_detail)
             itemDelete = itemView.findViewById<Button>(R.id.btn_delete)

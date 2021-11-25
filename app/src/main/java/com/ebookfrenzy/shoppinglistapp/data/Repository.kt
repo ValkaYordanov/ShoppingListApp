@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.ebookfrenzy.shoppinglistapp.R
+import com.google.firebase.firestore.FirebaseFirestore
 
 @SuppressLint("StaticFieldLeak")
 object Repository {
@@ -17,6 +18,7 @@ object Repository {
     fun setContext(cont: Context)
     {
         myContext=cont
+
     }
     //listener to changes that we can then use in the Activity
     private var productListener = MutableLiveData<MutableList<Product>>()
@@ -48,12 +50,14 @@ object Repository {
     fun createTestData()
     {
 
-        var bitmap = BitmapFactory.decodeResource(myContext.resources, R.drawable.index)
-            bitmap = Bitmap.createScaledBitmap(bitmap, 20, 20, true)
+//        var bitmap = BitmapFactory.decodeResource(myContext.resources, R.drawable.index)
+//            bitmap = Bitmap.createScaledBitmap(bitmap, 20, 20, true)
         //add some products to the products list - for testing purposes
         Log.d("Repository","create testdata")
-        products.add(Product(name="tomater", image=bitmap, quantity = 1,shop = "fotex"))
-        products.add(Product(name="bønner",image=bitmap, quantity = 3,shop = "ikea"))
+        products.add(Product(name="tomater", quantity = 1,shop = "fotex"))
+        products.add(Product(name="bønner", quantity = 3,shop = "ikea"))
+        //products.add(Product(name="bønner",image=bitmap, quantity = 3,shop = "ikea"))
+
     }
 
 }
