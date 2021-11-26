@@ -38,21 +38,24 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding : ActivityMainBinding
     lateinit var viewModel : MainViewModel
     private lateinit var db: FirebaseFirestore
+    lateinit var quantityField
 
     private fun addProduct() {
         val proName=findViewById<EditText>(R.id.ed_productName).getText().toString()
         val shop=findViewById<EditText>(R.id.ed_shop).getText().toString()
-        val qantitystring = findViewById<EditText>(R.id.ed_quantity).getText().toString()
+        val quantityString = findViewById<EditText>(R.id.ed_quantity).getText().toString()
 
-        if(proName.isNullOrEmpty()|| qantitystring.isNullOrEmpty()|| shop.isNullOrEmpty())
+        if(proName.isNullOrEmpty()|| quantityString.isNullOrEmpty()|| shop.isNullOrEmpty())
         {
             findViewById<EditText>(R.id.ed_productName).setText("")
             findViewById<EditText>(R.id.ed_quantity).setText("")
             findViewById<EditText>(R.id.ed_shop).setText("")
+
         }
-
-        val qantityField = findViewById<EditText>(R.id.ed_quantity).getText().toString().toInt()
-
+        if(proName.isNotEmpty()|| quantityString.isNotEmpty()|| shop.isNotEmpty()) {
+             quantityField =
+                findViewById<EditText>(R.id.ed_quantity).getText().toString().toInt()
+        }
 
 //        var bitmap = BitmapFactory.decodeResource(Repository.myContext.resources, R.drawable.index)
 //        bitmap = Bitmap.createScaledBitmap(bitmap, 20, 20, true)
@@ -63,19 +66,15 @@ class MainActivity : AppCompatActivity() {
 
         val product = Product(
             name = findViewById<EditText>(R.id.ed_productName).getText().toString(),
-            quantity = qantityField,
+            quantity = quantityField,
             shop = findViewById<EditText>(R.id.ed_shop).getText().toString()
         )
-        db.collection("product")
-            .add(product)
-            .addOnSuccessListener { documentReference ->
-                Log.d("Error", "DocumentSnapshot written with ID: " + documentReference.id)
-            }
-            .addOnFailureListener { e -> Log.w("Error", "Error adding document", e) }
+       adapter.createProduct(product)
 
         findViewById<EditText>(R.id.ed_productName).setText("")
         findViewById<EditText>(R.id.ed_quantity).setText("")
         findViewById<EditText>(R.id.ed_shop).setText("")
+
 
         Log.d("onCreate", "${product}")
     }

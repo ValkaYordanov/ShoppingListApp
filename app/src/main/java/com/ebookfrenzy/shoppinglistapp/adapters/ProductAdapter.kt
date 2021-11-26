@@ -65,6 +65,7 @@ class ProductAdapter(var products: MutableList<Product>) :
 
             itemDelete.setOnClickListener {
                 val position = adapterPosition
+
                 Repository.deleteProduct(position)
                 notifyItemRemoved(position) //this line notify the adapter
 

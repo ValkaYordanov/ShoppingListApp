@@ -8,12 +8,15 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.ebookfrenzy.shoppinglistapp.R
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
 
 @SuppressLint("StaticFieldLeak")
 object Repository {
     var products = mutableListOf<Product>()
     lateinit var myContext:Context
-
+    val db = Firebase.firestore
 
     fun setContext(cont: Context)
     {
@@ -26,25 +29,72 @@ object Repository {
 
     fun getData(): MutableLiveData<MutableList<Product>> {
         if (products.isEmpty())
-            createTestData()
+            //createTestData()
+            readDataFromFireBase()
         productListener.value = products //we inform the listener we have new data
         return productListener
     }
 
     fun deleteProduct(index: Int) { // in the Repository
+        deleteProductFromFirebase(index)
         products.removeAt(index)
         productListener.value = products
+
+    }
+    fun deleteProductFromFirebase(index:Int) {
+        val product = products[index]
+        db.collection("product").document(product.id).delete().addOnSuccessListener {
+            Log.d("Snapshot","DocumentSnapshot with id: ${product.id} successfully deleted!")
+            //products.removeAt(index) //removes it from the list
+        }
+            .addOnFailureListener { e -> Log.w("Error", "Error deleting document", e) }
     }
 
     fun deleteAllProducts() { // in the Repository
+        deleteAllFirebase()
         products.clear()
         productListener.value = products
+    }
+    private fun deleteAllFirebase() {
+        val batch = db.batch()
+        for (book in products) {
+            val ref = db.collection("product").document(book.id)
+            batch.delete(ref)
+        }
+
+        // Commit the batch
+        batch.commit().addOnCompleteListener {}
     }
 
     fun addProduct(product: Product)
     {
-        products.add(product);
-        productListener.value = products
+        db.collection("product")
+            .add(product)
+            .addOnSuccessListener { documentReference ->
+                Log.d("Error", "DocumentSnapshot written with ID: " + documentReference.id)
+            }
+            .addOnFailureListener { e -> Log.w("Error", "Error adding document", e) }
+
+//        products.add(product);
+//        productListener.value = products
+        readDataFromFireBase()
+    }
+    private fun readDataFromFireBase()
+    {
+products.clear()
+        db.collection("product").get()
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    Log.d("Repository", "${document.id} => ${document.data}")
+                    val product = document.toObject<Product>()
+                    product.id = document.id  //set the ID in the product class
+                    products.add(product)
+                }
+                productListener.value = products //notify our listener we have new data
+            }
+            .addOnFailureListener { exception ->
+                Log.d("Repository", "Error getting documents: ", exception)
+            }
     }
 
     fun createTestData()
