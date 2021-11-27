@@ -35,48 +35,42 @@ class MainActivity : AppCompatActivity() {
 
     //you need to have an Adapter for the products
     lateinit var adapter: ProductAdapter
-    lateinit var binding : ActivityMainBinding
-    lateinit var viewModel : MainViewModel
+    lateinit var binding: ActivityMainBinding
+    lateinit var viewModel: MainViewModel
     private lateinit var db: FirebaseFirestore
-    lateinit var quantityField
+
 
     private fun addProduct() {
-        val proName=findViewById<EditText>(R.id.ed_productName).getText().toString()
-        val shop=findViewById<EditText>(R.id.ed_shop).getText().toString()
+        val proName = findViewById<EditText>(R.id.ed_productName).getText().toString()
+        val shop = findViewById<EditText>(R.id.ed_shop).getText().toString()
         val quantityString = findViewById<EditText>(R.id.ed_quantity).getText().toString()
 
-        if(proName.isNullOrEmpty()|| quantityString.isNullOrEmpty()|| shop.isNullOrEmpty())
-        {
+        if (proName.isNullOrEmpty() || quantityString.isNullOrEmpty() || shop.isNullOrEmpty()) {
+            findViewById<EditText>(R.id.ed_productName).setText("")
+            findViewById<EditText>(R.id.ed_quantity).setText("")
+            findViewById<EditText>(R.id.ed_shop).setText("")
+            Toast.makeText(this, "You need to fill all 3 fields!", Toast.LENGTH_SHORT)
+                .show()
+        }
+        if (proName.isNotEmpty() || quantityString.isNotEmpty() || shop.isNotEmpty()) {
+            var quantityField =
+                findViewById<EditText>(R.id.ed_quantity).getText().toString().toInt()
+
+
+            val product = Product(
+                name = findViewById<EditText>(R.id.ed_productName).getText().toString(),
+                quantity = quantityField,
+                shop = findViewById<EditText>(R.id.ed_shop).getText().toString()
+            )
+            adapter.createProduct(product)
+
             findViewById<EditText>(R.id.ed_productName).setText("")
             findViewById<EditText>(R.id.ed_quantity).setText("")
             findViewById<EditText>(R.id.ed_shop).setText("")
 
+
+            Log.d("onCreate", "${product}")
         }
-        if(proName.isNotEmpty()|| quantityString.isNotEmpty()|| shop.isNotEmpty()) {
-             quantityField =
-                findViewById<EditText>(R.id.ed_quantity).getText().toString().toInt()
-        }
-
-//        var bitmap = BitmapFactory.decodeResource(Repository.myContext.resources, R.drawable.index)
-//        bitmap = Bitmap.createScaledBitmap(bitmap, 20, 20, true)
-
-//        var product = Product( name = proName,shop = shop,quantity = qantity)
-//        adapter.createProduct(product)
-
-
-        val product = Product(
-            name = findViewById<EditText>(R.id.ed_productName).getText().toString(),
-            quantity = quantityField,
-            shop = findViewById<EditText>(R.id.ed_shop).getText().toString()
-        )
-       adapter.createProduct(product)
-
-        findViewById<EditText>(R.id.ed_productName).setText("")
-        findViewById<EditText>(R.id.ed_quantity).setText("")
-        findViewById<EditText>(R.id.ed_shop).setText("")
-
-
-        Log.d("onCreate", "${product}")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -99,32 +93,32 @@ class MainActivity : AppCompatActivity() {
 
 
         viewModel.getData().observe(this, Observer {
-            Log.d("Products","Found ${it.size} products")
+            Log.d("Products", "Found ${it.size} products")
             updateUI(it)
         })
-
-
 
 
     }
 
     fun View.hideKeyboard() {
-        val inputManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val inputManager =
+            context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputManager.hideSoftInputFromWindow(windowToken, 0)
     }
-    fun updateUI(products : MutableList<Product>) {
+
+    fun updateUI(products: MutableList<Product>) {
         val layoutManager = LinearLayoutManager(this)
 
         /*you need to have a defined a recylerView in your
         xml file - in this case the id of the recyclerview should
         be "recyclerView" - as the code line below uses that */
 
-         binding.recyclerView.layoutManager = layoutManager
+        binding.recyclerView.layoutManager = layoutManager
 
         adapter = ProductAdapter(products)
 
         /*connecting the recyclerview to the adapter  */
-          binding.recyclerView.adapter = adapter
+        binding.recyclerView.adapter = adapter
 
     }
 
@@ -146,16 +140,14 @@ class MainActivity : AppCompatActivity() {
                     .show()
                 return true
             }
-            R.id.item_sortByName ->
-            {
+            R.id.item_sortByName -> {
                 Repository.products.sortBy { it.name }
-                    adapter.notifyDataSetChanged()
+                adapter.notifyDataSetChanged()
 
             }
-            R.id.item_sortByQunatity ->
-            {
-                    Repository.products.sortBy { it.quantity }
-                            adapter.notifyDataSetChanged()
+            R.id.item_sortByQunatity -> {
+                Repository.products.sortBy { it.quantity }
+                adapter.notifyDataSetChanged()
 
             }
             R.id.item_refresh -> {
@@ -164,7 +156,7 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
             R.id.item_deleteAllItems -> {
-              adapter.deleteAllProducts()
+                adapter.deleteAllProducts()
                 return true
             }
             R.id.item_refresh -> {
