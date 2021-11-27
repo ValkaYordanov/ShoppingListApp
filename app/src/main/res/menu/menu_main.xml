@@ -3,19 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="org.pondar.actionbardemokotlin.MainActivity">
 
-
     <item
-        android:id="@+id/item_addProductItem"
-        android:icon="@android:drawable/ic_menu_add"
+        android:id="@+id/item_action_share"
+        android:icon="@android:drawable/ic_menu_share"
         app:showAsAction="always"
         android:orderInCategory="1"
-        android:title="@string/help"/>
-
+        android:title="@string/share"/>
     <item
-        android:id="@+id/item_refresh"
-        app:showAsAction="ifRoom"
-        android:orderInCategory="3"
-        android:title="@string/refresh"/>
+        android:id="@+id/item_action_settings"
+        app:showAsAction="never"
+        android:orderInCategory="1"
+        android:title="@string/action_settings"/>
 
     <item
         android:id="@+id/item_deleteAllItems"
@@ -26,12 +24,12 @@
 
     <item
         android:id="@+id/item_sortByName"
-        app:showAsAction="ifRoom"
+        app:showAsAction="never"
         android:orderInCategory="2"
         android:title="@string/sortByName"/>
     <item
         android:id="@+id/item_sortByQunatity"
-        app:showAsAction="ifRoom"
+        app:showAsAction="never"
         android:orderInCategory="2"
         android:title="@string/sortByQuantity"/>
 

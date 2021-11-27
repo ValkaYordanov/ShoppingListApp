@@ -10,7 +10,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ShoppingListApp">
         <uses-library android:name="com.google.android.maps" />
-
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="true"
+            android:label="@string/action_settings">
+        </activity>
         <activity
             android:name=".MainActivity"
             android:exported="true">

@@ -1,6 +1,7 @@
 package com.ebookfrenzy.shoppinglistapp
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -9,6 +10,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -30,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     lateinit var viewModel: MainViewModel
     private lateinit var db: FirebaseFirestore
+    private val RESULT_CODE_PREFERENCES = 1
 
     private fun positiveClicked() {
         val toast = Toast.makeText(
@@ -53,14 +56,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun showDialog(v: View) {
-        //showing our dialog.
 
-        val dialog = MyDialogFragment(::positiveClicked, ::negativeClick)
-        //Here we show the dialog
-        //The tag "MyFragement" is not important for us.
-        dialog.show(supportFragmentManager, "myFragment")
-    }
     private fun addProduct() {
         val proName = findViewById<EditText>(R.id.ed_productName).getText().toString()
         val shop = findViewById<EditText>(R.id.ed_shop).getText().toString()
@@ -72,8 +68,9 @@ class MainActivity : AppCompatActivity() {
             findViewById<EditText>(R.id.ed_shop).setText("")
             Toast.makeText(this, "You need to fill all 3 fields!", Toast.LENGTH_SHORT)
                 .show()
+            hideKeybaord(getWindow().getDecorView().getRootView());
         }
-        if (proName.isNotEmpty() || quantityString.isNotEmpty() || shop.isNotEmpty()) {
+        if (proName.isNotEmpty() && quantityString.isNotEmpty() && shop.isNotEmpty()) {
             var quantityField =
                 findViewById<EditText>(R.id.ed_quantity).getText().toString().toInt()
 
@@ -90,10 +87,14 @@ class MainActivity : AppCompatActivity() {
             findViewById<EditText>(R.id.ed_shop).setText("")
 
 
+            hideKeybaord(getWindow().getDecorView().getRootView());
             Log.d("onCreate", "${product}")
         }
     }
-
+    private fun hideKeybaord(v: View) {
+        val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(v.applicationWindowToken, 0)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -119,13 +120,12 @@ class MainActivity : AppCompatActivity() {
         })
 
 
+        val name = PreferenceHandler.getName(this)
+        updateUIPref(name)
+
     }
 
-    fun View.hideKeyboard() {
-        val inputManager =
-            context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputManager.hideSoftInputFromWindow(windowToken, 0)
-    }
+
 
     fun updateUI(products: MutableList<Product>) {
         val layoutManager = LinearLayoutManager(this)
@@ -149,6 +149,27 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    private fun updateUIPref(name: String) {
+        findViewById<TextView>(R.id.myName).setText(name + "'s list")
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == RESULT_CODE_PREFERENCES)
+        //the code means we came back from settings
+        {
+            //I can can these methods like this, because they are static
+
+            val name = PreferenceHandler.getName(this)
+
+            val message = "Welcome, $name, to your shopping list?"
+            val toast = Toast.makeText(this, message, Toast.LENGTH_LONG)
+            toast.show()
+            updateUIPref(name)
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle action bar item clicks here. The action bar will
@@ -156,9 +177,22 @@ class MainActivity : AppCompatActivity() {
         // as you specify a parent activity in AndroidManifest.xml.
         Log.d("icon_pressed", "${item.itemId}")
         when (item.itemId) {
-            R.id.item_addProductItem -> {
-                Toast.makeText(this, "About item clicked!", Toast.LENGTH_LONG)
-                    .show()
+            R.id.item_action_share -> {
+                var allProducts = ""
+
+                for (product in Repository.products) {
+                    allProducts=allProducts + "${product.name} | ${product.quantity} | ${product.shop} \n"
+                }
+                val intent=Intent()
+                intent.action=Intent.ACTION_SEND
+                intent.putExtra(Intent.EXTRA_TEXT,allProducts)
+                intent.type="text/plain"
+                startActivity(Intent.createChooser(intent,resources.getString(R.string.share)))
+                return true
+            }
+            R.id.item_action_settings -> {
+                val intent = Intent(this, SettingsActivity::class.java)
+                startActivityForResult(intent, RESULT_CODE_PREFERENCES)
                 return true
             }
             R.id.item_sortByName -> {
@@ -171,11 +205,7 @@ class MainActivity : AppCompatActivity() {
                 adapter.notifyDataSetChanged()
 
             }
-            R.id.item_refresh -> {
-                Toast.makeText(this, "Delete item clicked!", Toast.LENGTH_LONG)
-                    .show()
-                return true
-            }
+
             R.id.item_deleteAllItems -> {
                 if(adapter.products.isNotEmpty()) {
                     val dialog = MyDialogFragment(::positiveClicked, ::negativeClick)
@@ -189,11 +219,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 return true
             }
-            R.id.item_refresh -> {
-                Toast.makeText(this, "Refresh item clicked!", Toast.LENGTH_LONG)
-                    .show()
-                return true
-            }
+
         }
 
         return false //we did not handle the event

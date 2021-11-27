@@ -57,8 +57,8 @@ object Repository {
     }
     private fun deleteAllFirebase() {
         val batch = db.batch()
-        for (book in products) {
-            val ref = db.collection("product").document(book.id)
+        for (product in products) {
+            val ref = db.collection("product").document(product.id)
             batch.delete(ref)
         }
 

@@ -6,7 +6,7 @@ xmlns:app="http://schemas.android.com/apk/res-auto"
 android:layout_width="match_parent"
 android:layout_height="wrap_content"
 android:layout_margin="5dp"
-app:cardBackgroundColor="#81C784"
+app:cardBackgroundColor="#C88533"
 app:cardCornerRadius="12dp"
 app:cardElevation="3dp"
 app:contentPadding="4dp">
@@ -17,42 +17,29 @@ app:contentPadding="4dp">
     android:layout_height="wrap_content"
     android:padding="16dp">
 
-    <ImageView
-        android:id="@+id/item_image"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/item_name"
         android:layout_width="236dp"
         android:layout_height="29dp"
-        android:layout_marginStart="16dp"
         android:textSize="20sp"
-        app:layout_constraintLeft_toRightOf="@+id/item_image"
-        app:layout_constraintStart_toEndOf="@+id/item_image"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/item_detail"
         android:layout_width="236dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintLeft_toRightOf="@+id/item_image"
-        app:layout_constraintStart_toEndOf="@+id/item_image"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/item_name" />
 
     <Button
         android:id="@+id/btn_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="8dp"
         android:text="Delete"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/item_detail" />
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
