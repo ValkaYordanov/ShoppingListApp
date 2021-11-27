@@ -1,11 +1,6 @@
 package com.ebookfrenzy.shoppinglistapp
 
-import android.content.ContentValues.TAG
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.icu.number.NumberFormatter
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -14,8 +9,8 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
-import android.widget.NumberPicker
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,9 +22,6 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import org.w3c.dom.Text
-import java.lang.RuntimeException
-import java.text.NumberFormat
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,7 +31,36 @@ class MainActivity : AppCompatActivity() {
     lateinit var viewModel: MainViewModel
     private lateinit var db: FirebaseFirestore
 
+    private fun positiveClicked() {
+        val toast = Toast.makeText(
+            this,
+            "You delete all products from the list!", Toast.LENGTH_LONG
+        )
+        toast.show()
+        //binding.dataText.text = "" //clearing the data
+        adapter.deleteAllProducts()
+    }
 
+
+    //callback function from yes/no dialog - for no choice
+    private fun negativeClick() {
+        //Here we override the method and can now do something
+        val toast = Toast.makeText(
+            this,
+            "NO was pressed!", Toast.LENGTH_LONG
+        )
+        toast.show()
+    }
+
+
+    fun showDialog(v: View) {
+        //showing our dialog.
+
+        val dialog = MyDialogFragment(::positiveClicked, ::negativeClick)
+        //Here we show the dialog
+        //The tag "MyFragement" is not important for us.
+        dialog.show(supportFragmentManager, "myFragment")
+    }
     private fun addProduct() {
         val proName = findViewById<EditText>(R.id.ed_productName).getText().toString()
         val shop = findViewById<EditText>(R.id.ed_shop).getText().toString()
@@ -156,7 +177,16 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
             R.id.item_deleteAllItems -> {
-                adapter.deleteAllProducts()
+                if(adapter.products.isNotEmpty()) {
+                    val dialog = MyDialogFragment(::positiveClicked, ::negativeClick)
+                    //Here we show the dialog
+                    //The tag "MyFragement" is not important for us.
+                    dialog.show(supportFragmentManager, "myFragment")
+                }else
+                {
+                    Toast.makeText(this, "You don't have products in the list!", Toast.LENGTH_LONG)
+                        .show()
+                }
                 return true
             }
             R.id.item_refresh -> {

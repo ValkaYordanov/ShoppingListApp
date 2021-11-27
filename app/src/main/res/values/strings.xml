@@ -7,4 +7,9 @@
     <string name="help">Help</string>
     <string name="sortByName">Sort by name</string>
     <string name="sortByQuantity">Sort by quantity</string>
+
+    <string name="confirmation">Confirmation</string>
+    <string name="areYouSure">Are you sure to delete all products from the list?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>
