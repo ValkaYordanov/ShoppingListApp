@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.ebookfrenzy.shoppinglistapp.adapters.ProductAdapter
 import com.ebookfrenzy.shoppinglistapp.data.Product
 import com.ebookfrenzy.shoppinglistapp.data.Repository
@@ -33,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var viewModel: MainViewModel
     private lateinit var db: FirebaseFirestore
     private val RESULT_CODE_PREFERENCES = 1
+   lateinit var btnUpdate : Button
 
     private fun positiveClicked() {
         val toast = Toast.makeText(
@@ -95,6 +97,9 @@ class MainActivity : AppCompatActivity() {
         val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(v.applicationWindowToken, 0)
     }
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -112,6 +117,8 @@ class MainActivity : AppCompatActivity() {
         val btnCreate = findViewById<Button>(R.id.btnCreate)
         btnCreate.setOnClickListener { addProduct() }
 
+        //btnUpdate = findViewById(R.id.btn_Update)!!
+
 
 
         viewModel.getData().observe(this, Observer {
@@ -125,7 +132,13 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-
+    fun btnUpdate() {
+        var position = adapter.returnPos(adapter.ViewHolder(binding.root))
+        var productToUpdate: Product
+        productToUpdate = Repository.getProduct(position)
+        val dialog = UpdateProductDialog(productToUpdate)
+        dialog.show(supportFragmentManager, "UpdateProductDialog")
+    }
 
     fun updateUI(products: MutableList<Product>) {
         val layoutManager = LinearLayoutManager(this)
