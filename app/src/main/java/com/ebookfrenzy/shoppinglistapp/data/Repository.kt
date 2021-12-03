@@ -95,7 +95,7 @@ object Repository {
 
     fun updateProduct(product: Product, newName: String, newQuantity: Int, newShop: String) {
         db.collection("product").document(product.id)
-            .update("name", newName, "qiantity", newQuantity, "shop", newShop)
+            .update("name", newName, "quantity", newQuantity, "shop", newShop)
         readDataFromFireBase()
     }
 

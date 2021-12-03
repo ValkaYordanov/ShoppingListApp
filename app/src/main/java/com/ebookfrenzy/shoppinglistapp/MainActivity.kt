@@ -119,7 +119,15 @@ class MainActivity : AppCompatActivity() {
 
         //btnUpdate = findViewById(R.id.btn_Update)!!
 
+//        val btnUpdateProduct = findViewById<Button>(R.id.btnUpdate)
+//        btnUpdateProduct.setOnClickListener {
+//            var position = adapter.returnPos(adapter.ViewHolder(binding.root))
+//            var productToUpdate: Product
+//            productToUpdate = Repository.getProduct(position)
 
+//            findViewById<EditText>(R.id.ed_productName).setText("")
+//            findViewById<EditText>(R.id.ed_quantity).setText("")
+//            findViewById<EditText>(R.id.ed_shop).setText("") }
 
         viewModel.getData().observe(this, Observer {
             Log.d("Products", "Found ${it.size} products")
@@ -133,12 +141,30 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun btnUpdate() {
-        var position = adapter.returnPos(adapter.ViewHolder(binding.root))
-        var productToUpdate: Product
-        productToUpdate = Repository.getProduct(position)
-        val dialog = UpdateProductDialog(productToUpdate)
-        dialog.show(supportFragmentManager, "UpdateProductDialog")
+
+//        var position = adapter.returnPos(adapter.ViewHolder(binding.root))
+//        var productToUpdate: Product
+//        productToUpdate = Repository.getProduct(position)
+//
+//        findViewById<EditText>(R.id.ed_productName).setText(productToUpdate.name)
+//        findViewById<EditText>(R.id.ed_quantity).setText(productToUpdate.quantity)
+//        findViewById<EditText>(R.id.ed_shop).setText(productToUpdate.shop)
+
+//        val dialog = UpdateProductDialog(productToUpdate)
+//        dialog.show(supportFragmentManager, "UpdateProductDialog")
     }
+    fun callUpdateFunc(product: Product, newName: String, newQuantity: Int, newShop: String)
+    {
+        adapter.updateProduct(product, newName, newQuantity,newShop);
+    }
+
+    fun callBackfunc(product: Product)
+    {
+        val dialog = UpdateProductDialog(product,::callUpdateFunc,::hideKeybaord)
+       dialog.show(supportFragmentManager, "UpdateProductDialog")
+    }
+
+
 
     fun updateUI(products: MutableList<Product>) {
         val layoutManager = LinearLayoutManager(this)
@@ -149,7 +175,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.recyclerView.layoutManager = layoutManager
 
-        adapter = ProductAdapter(products)
+        adapter = ProductAdapter(products,::callBackfunc)
 
         /*connecting the recyclerview to the adapter  */
         binding.recyclerView.adapter = adapter

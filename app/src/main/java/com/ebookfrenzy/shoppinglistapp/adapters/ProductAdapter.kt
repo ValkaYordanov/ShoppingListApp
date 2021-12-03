@@ -1,5 +1,6 @@
 package com.ebookfrenzy.shoppinglistapp.adapters
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
@@ -7,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
@@ -20,10 +22,14 @@ import java.io.ByteArrayInputStream
 import java.io.InputStream
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
+import com.ebookfrenzy.shoppinglistapp.MainActivity
+import com.google.android.material.internal.ContextUtils.getActivity
 
 
-class ProductAdapter(var products: MutableList<Product>) :
+class ProductAdapter(var products: MutableList<Product>,var callBackFunc: (product: Product)-> Unit) :
     RecyclerView.Adapter<ProductAdapter.ViewHolder>() {
+
+    lateinit var mContext: Context
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductAdapter.ViewHolder {
         val v = LayoutInflater.from(parent.context)
@@ -74,20 +80,26 @@ class ProductAdapter(var products: MutableList<Product>) :
         var itemName: TextView
         var itemDetail: TextView
         var itemDelete :Button
-        //var itemUpdate :Button
+        var itemUpdate :Button
         init {
 
             //itemImage = itemView.findViewById(R.id.item_image)
             itemName = itemView.findViewById(R.id.item_name)
             itemDetail = itemView.findViewById(R.id.item_detail)
             itemDelete = itemView.findViewById<Button>(R.id.btn_delete)
-            //itemUpdate = itemView.findViewById<Button>(R.id.btn_Update)
+            itemUpdate = itemView.findViewById<Button>(R.id.btnUpdate)
 
             itemDelete.setOnClickListener {
                 val position = adapterPosition
 
                 Repository.deleteProduct(position)
                 notifyItemRemoved(position) //this line notify the adapter
+
+            }
+
+            itemUpdate.setOnClickListener {
+                val position = adapterPosition
+                callBackFunc(products[position])
 
             }
 
@@ -99,6 +111,7 @@ class ProductAdapter(var products: MutableList<Product>) :
         }
 
         }
+
 
 
     }
