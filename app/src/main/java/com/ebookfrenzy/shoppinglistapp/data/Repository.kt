@@ -27,30 +27,6 @@ object Repository {
     //listener to changes that we can then use in the Activity
     private var productListener = MutableLiveData<MutableList<Product>>()
 
-    fun getProduct(index: Int): Product {
-        val product = products[index]
-        var pro = Product("","", 0, "")
-
-        val docRef = db.collection("product").document(product.id)
-        docRef.get()
-            .addOnSuccessListener { document ->
-                if (document != null) {
-
-                    pro.id = "${document.data?.get("id")}"
-                    pro.name = "${document.data?.get("name")}"
-                    pro.quantity = document.data?.get("quantity").toString().toInt()
-                    pro.shop = "${document.data?.get("shop")}"
-
-
-                } else {
-                    Log.d(TAG, "No such document")
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.d(TAG, "get failed with ", exception)
-            }
-        return pro
-    }
 
     fun getData(): MutableLiveData<MutableList<Product>> {
         if (products.isEmpty())
@@ -60,23 +36,21 @@ object Repository {
         return productListener
     }
 
-    fun deleteProduct(index: Int) { // in the Repository
+    fun deleteProduct(index: Int) {
         deleteProductFromFirebase(index)
         products.removeAt(index)
         productListener.value = products
-
     }
 
     fun deleteProductFromFirebase(index: Int) {
         val product = products[index]
         db.collection("product").document(product.id).delete().addOnSuccessListener {
             Log.d("Snapshot", "DocumentSnapshot with id: ${product.id} successfully deleted!")
-            //products.removeAt(index) //removes it from the list
         }
             .addOnFailureListener { e -> Log.w("Error", "Error deleting document", e) }
     }
 
-    fun deleteAllProducts() { // in the Repository
+    fun deleteAllProducts() {
         deleteAllFirebase()
         products.clear()
         productListener.value = products
@@ -88,8 +62,6 @@ object Repository {
             val ref = db.collection("product").document(product.id)
             batch.delete(ref)
         }
-
-        // Commit the batch
         batch.commit().addOnCompleteListener {}
     }
 
@@ -107,8 +79,6 @@ object Repository {
             }
             .addOnFailureListener { e -> Log.w("Error", "Error adding document", e) }
 
-//        products.add(product);
-//        productListener.value = products
         readDataFromFireBase()
     }
 

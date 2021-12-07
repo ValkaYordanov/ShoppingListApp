@@ -39,13 +39,8 @@ class ProductAdapter(var products: MutableList<Product>,var callBackFunc: (produ
     }
 
     override fun onBindViewHolder(holder: ProductAdapter.ViewHolder, position: Int) {
-
-
         holder.itemName.text = products[position].name
         holder.itemDetail.text = "Quantity:" + products[position].quantity +"\nShop: " +products[position].shop
-        //holder.itemImage.setImageBitmap(products[position].image) // holder.itemImage.setImageBitmap()
-
-
     }
 
     fun returnPos(holder: ProductAdapter.ViewHolder):Int{

@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var viewModel: MainViewModel
     private lateinit var db: FirebaseFirestore
     private val RESULT_CODE_PREFERENCES = 1
-   lateinit var btnUpdate : Button
+
 
     private fun positiveClicked() {
         val toast = Toast.makeText(
@@ -140,19 +140,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun btnUpdate() {
 
-//        var position = adapter.returnPos(adapter.ViewHolder(binding.root))
-//        var productToUpdate: Product
-//        productToUpdate = Repository.getProduct(position)
-//
-//        findViewById<EditText>(R.id.ed_productName).setText(productToUpdate.name)
-//        findViewById<EditText>(R.id.ed_quantity).setText(productToUpdate.quantity)
-//        findViewById<EditText>(R.id.ed_shop).setText(productToUpdate.shop)
-
-//        val dialog = UpdateProductDialog(productToUpdate)
-//        dialog.show(supportFragmentManager, "UpdateProductDialog")
-    }
     fun callUpdateFunc(product: Product, newName: String, newQuantity: Int, newShop: String)
     {
         adapter.updateProduct(product, newName, newQuantity,newShop);
@@ -168,22 +156,14 @@ class MainActivity : AppCompatActivity() {
 
     fun updateUI(products: MutableList<Product>) {
         val layoutManager = LinearLayoutManager(this)
-
-        /*you need to have a defined a recylerView in your
-        xml file - in this case the id of the recyclerview should
-        be "recyclerView" - as the code line below uses that */
-
         binding.recyclerView.layoutManager = layoutManager
-
         adapter = ProductAdapter(products,::callBackfunc)
-
-        /*connecting the recyclerview to the adapter  */
         binding.recyclerView.adapter = adapter
 
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
+
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
@@ -195,9 +175,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == RESULT_CODE_PREFERENCES)
-        //the code means we came back from settings
+
         {
-            //I can can these methods like this, because they are static
+
 
             val name = PreferenceHandler.getName(this)
 
@@ -211,9 +191,7 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         Log.d("icon_pressed", "${item.itemId}")
         when (item.itemId) {
             R.id.item_action_share -> {
@@ -248,8 +226,6 @@ class MainActivity : AppCompatActivity() {
             R.id.item_deleteAllItems -> {
                 if(adapter.products.isNotEmpty()) {
                     val dialog = MyDialogFragment(::positiveClicked, ::negativeClick)
-                    //Here we show the dialog
-                    //The tag "MyFragement" is not important for us.
                     dialog.show(supportFragmentManager, "myFragment")
                 }else
                 {
@@ -261,7 +237,7 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        return false //we did not handle the event
+        return false
 
     }
 }
