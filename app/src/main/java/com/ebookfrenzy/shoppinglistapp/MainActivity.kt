@@ -1,6 +1,5 @@
 package com.ebookfrenzy.shoppinglistapp
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -16,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.ebookfrenzy.shoppinglistapp.adapters.ProductAdapter
 import com.ebookfrenzy.shoppinglistapp.data.Product
 import com.ebookfrenzy.shoppinglistapp.data.Repository
@@ -28,7 +26,6 @@ import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
 
-    //you need to have an Adapter for the products
     lateinit var adapter: ProductAdapter
     lateinit var binding: ActivityMainBinding
     lateinit var viewModel: MainViewModel
@@ -42,21 +39,17 @@ class MainActivity : AppCompatActivity() {
             "You delete all products from the list!", Toast.LENGTH_LONG
         )
         toast.show()
-        //binding.dataText.text = "" //clearing the data
         adapter.deleteAllProducts()
     }
 
 
-    //callback function from yes/no dialog - for no choice
     private fun negativeClick() {
-        //Here we override the method and can now do something
         val toast = Toast.makeText(
             this,
             "NO was pressed!", Toast.LENGTH_LONG
         )
         toast.show()
     }
-
 
 
     private fun addProduct() {
@@ -93,11 +86,11 @@ class MainActivity : AppCompatActivity() {
             Log.d("onCreate", "${product}")
         }
     }
+
     private fun hideKeybaord(v: View) {
         val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(v.applicationWindowToken, 0)
     }
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -110,24 +103,11 @@ class MainActivity : AppCompatActivity() {
         FirebaseApp.initializeApp(applicationContext)
         db = Firebase.firestore
 
-        //Crashlytics.getInstance().crash();
-        //throw RuntimeException("test crash")
+
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
         val btnCreate = findViewById<Button>(R.id.btnCreate)
         btnCreate.setOnClickListener { addProduct() }
-
-        //btnUpdate = findViewById(R.id.btn_Update)!!
-
-//        val btnUpdateProduct = findViewById<Button>(R.id.btnUpdate)
-//        btnUpdateProduct.setOnClickListener {
-//            var position = adapter.returnPos(adapter.ViewHolder(binding.root))
-//            var productToUpdate: Product
-//            productToUpdate = Repository.getProduct(position)
-
-//            findViewById<EditText>(R.id.ed_productName).setText("")
-//            findViewById<EditText>(R.id.ed_quantity).setText("")
-//            findViewById<EditText>(R.id.ed_shop).setText("") }
 
         viewModel.getData().observe(this, Observer {
             Log.d("Products", "Found ${it.size} products")
@@ -141,23 +121,20 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun callUpdateFunc(product: Product, newName: String, newQuantity: Int, newShop: String)
-    {
-        adapter.updateProduct(product, newName, newQuantity,newShop);
+    fun callUpdateFunc(product: Product, newName: String, newQuantity: Int, newShop: String) {
+        adapter.updateProduct(product, newName, newQuantity, newShop);
     }
 
-    fun callBackfunc(product: Product)
-    {
-        val dialog = UpdateProductDialog(product,::callUpdateFunc,::hideKeybaord)
-       dialog.show(supportFragmentManager, "UpdateProductDialog")
+    fun callBackfunc(product: Product) {
+        val dialog = UpdateProductDialog(product, ::callUpdateFunc, ::hideKeybaord)
+        dialog.show(supportFragmentManager, "UpdateProductDialog")
     }
-
 
 
     fun updateUI(products: MutableList<Product>) {
         val layoutManager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager = layoutManager
-        adapter = ProductAdapter(products,::callBackfunc)
+        adapter = ProductAdapter(products, ::callBackfunc)
         binding.recyclerView.adapter = adapter
 
     }
@@ -168,19 +145,10 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    private fun updateUIPref(name: String) {
-        findViewById<TextView>(R.id.myName).setText(name + "'s list")
-
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == RESULT_CODE_PREFERENCES)
-
-        {
-
-
+        if (requestCode == RESULT_CODE_PREFERENCES) {
             val name = PreferenceHandler.getName(this)
-
             val message = "Welcome, $name, to your shopping list?"
             val toast = Toast.makeText(this, message, Toast.LENGTH_LONG)
             toast.show()
@@ -189,6 +157,10 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
+    private fun updateUIPref(name: String) {
+        findViewById<TextView>(R.id.myName).setText(name + "'s list")
+
+    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
@@ -198,13 +170,14 @@ class MainActivity : AppCompatActivity() {
                 var allProducts = ""
 
                 for (product in Repository.products) {
-                    allProducts=allProducts + "${product.name} | ${product.quantity} | ${product.shop} \n"
+                    allProducts =
+                        allProducts + "${product.name} | ${product.quantity} | ${product.shop} \n"
                 }
-                val intent=Intent()
-                intent.action=Intent.ACTION_SEND
-                intent.putExtra(Intent.EXTRA_TEXT,allProducts)
-                intent.type="text/plain"
-                startActivity(Intent.createChooser(intent,resources.getString(R.string.share)))
+                val intent = Intent()
+                intent.action = Intent.ACTION_SEND
+                intent.putExtra(Intent.EXTRA_TEXT, allProducts)
+                intent.type = "text/plain"
+                startActivity(Intent.createChooser(intent, resources.getString(R.string.share)))
                 return true
             }
             R.id.item_action_settings -> {
@@ -224,11 +197,10 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.item_deleteAllItems -> {
-                if(adapter.products.isNotEmpty()) {
+                if (adapter.products.isNotEmpty()) {
                     val dialog = MyDialogFragment(::positiveClicked, ::negativeClick)
                     dialog.show(supportFragmentManager, "myFragment")
-                }else
-                {
+                } else {
                     Toast.makeText(this, "You don't have products in the list!", Toast.LENGTH_LONG)
                         .show()
                 }

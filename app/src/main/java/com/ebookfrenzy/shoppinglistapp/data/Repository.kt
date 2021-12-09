@@ -1,14 +1,9 @@
 package com.ebookfrenzy.shoppinglistapp.data
 
 import android.annotation.SuppressLint
-import android.content.ContentValues.TAG
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.ebookfrenzy.shoppinglistapp.R
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
@@ -24,15 +19,15 @@ object Repository {
 
     }
 
-    //listener to changes that we can then use in the Activity
+
     private var productListener = MutableLiveData<MutableList<Product>>()
 
 
     fun getData(): MutableLiveData<MutableList<Product>> {
         if (products.isEmpty())
-        //createTestData()
+
             readDataFromFireBase()
-        productListener.value = products //we inform the listener we have new data
+        productListener.value = products
         return productListener
     }
 
@@ -99,16 +94,6 @@ object Repository {
             }
     }
 
-    fun createTestData() {
 
-//        var bitmap = BitmapFactory.decodeResource(myContext.resources, R.drawable.index)
-//            bitmap = Bitmap.createScaledBitmap(bitmap, 20, 20, true)
-        //add some products to the products list - for testing purposes
-        Log.d("Repository", "create testdata")
-        products.add(Product(name = "tomater", quantity = 1, shop = "fotex"))
-        products.add(Product(name = "bønner", quantity = 3, shop = "ikea"))
-        //products.add(Product(name="bønner",image=bitmap, quantity = 3,shop = "ikea"))
-
-    }
 
 }
